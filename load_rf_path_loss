@@ -1,0 +1,65 @@
+import pandas as pd
+
+calPath = r'C:\Ares Configuration\Station Calibration\Calibration.csv'
+
+def esgPortW(calPath):
+    df_portw = pd.read_csv(calPath, usecols = [0,1,2], skiprows=[0,1,2,3,4])
+    freq = df_portw["Frequency (Hz)"]
+    loss = df_portw["Path Loss (dB)"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def esgPortX(calPath):
+    df_portx = pd.read_csv(calPath, usecols = [3,4,5], skiprows=[0,1,2,3,4], index_col=None)
+    freq = df_portx["Frequency (Hz).1"]
+    loss = df_portx["Path Loss (dB).1"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def esgPortY(calPath):
+    df_porty = pd.read_csv(calPath, usecols = [6,7,8], skiprows=[0,1,2,3,4])
+    freq = df_porty["Frequency (Hz).2"]
+    loss = df_porty["Path Loss (dB).2"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def esgPortZ(calPath):
+    df_portz = pd.read_csv(calPath, usecols = [9,10,11], skiprows=[0,1,2,3,4])
+    freq = df_portz["Frequency (Hz).3"]
+    loss = df_portz["Path Loss (dB).3"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def exaPortW(calPath):
+    df_exa_portw = pd.read_csv(calPath, usecols = [18,19,20], skiprows=[0,1,2,3,4], index_col=None)
+    freq = df_exa_portw["Frequency (Hz).6"]
+    loss = df_exa_portw["Path Loss (dB).6"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def exaPortX(calPath):
+    df_exa_portx = pd.read_csv(calPath, usecols = [22,23,24], skiprows=[0,1,2,3,4])
+    freq = df_exa_portx["Frequency (Hz).7"]
+    loss = df_exa_portx["Path Loss (dB).7"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def exaPortY(calPath):
+    df_exa_porty = pd.read_csv(calPath, usecols = [25,26,27], skiprows=[0,1,2,3,4])
+    freq = df_exa_porty["Frequency (Hz).8"]
+    loss = df_exa_porty["Path Loss (dB).8"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+def exaPortZ(calPath):
+    df_exa_portz = pd.read_csv(calPath, usecols = [28,29,30], skiprows=[0,1,2,3,4])
+    freq = df_exa_portz["Frequency (Hz).9"]
+    loss = df_exa_portz["Path Loss (dB).9"]
+    tbl = ','.join([f"{f}, {a}" for f, a in zip(freq, loss)])
+    return tbl
+
+
+
+
+
+
