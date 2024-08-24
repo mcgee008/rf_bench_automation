@@ -1,0 +1,270 @@
+import ctypes
+
+# Load the DLL
+path = r"C:\Python\DLL Files\NewSerialEngine.dll"
+
+excutePath = 
+macroPath = b'macros.c'
+logFile = 
+errorLogFile = 
+regXML = 
+debugXML = 
+
+class SE:
+    def __init__(self):
+        try:
+            self.se_dll = ctypes.CDLL(path)
+        except OSError as e:
+            print(f"Error loading DLL: {e}")
+            exit(1)
+    
+    def callMacro(self, port, func, params, pOut, max_size):
+        try: 
+            callMacroWithString = getattr(self.se_dll, "CallMacroFunctionWithOutputAndReturnInt")
+            callMacroWithString.argtypes = [ctypes.c_int32, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_void_p, ctypes.c_uint32]
+            callMacroWithString.restype = ctypes.c_int32
+            return callMacroWithString(port,func,params,pOut,max_size)  
+        except AttributeError as e:
+            print(f"Error setting function signature: {e}")
+            exit(1)
+      
+    def initThor(self):
+        # Define the function with the correct argument and return types
+        try:
+            initThorSerialEng = getattr(self.se_dll, "InitializeThorSerialEngine")
+            initThorSerialEng.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
+            initThorSerialEng.restype = ctypes.c_int32  # Return type is an int
+        except AttributeError as e:
+            print(f"Error setting function signature: {e}")
+            exit(1)
+
+        # Call the function
+        try:
+            result = initThorSerialEng(excutePath, macroPath, logFile, errorLogFile, regXML, debugXML)
+            print(f"Function returned: {result}")
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def getSwVersion(self, port):       
+        func = "GetSwVersionDll_USB".encode('utf-8') # Function name as bytes
+        params = "".encode('utf-8') # Parameters as bytes
+        max_size = 200  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_unicode_buffer(max_size)
+        
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1:
+                sw = bytes(pOut).decode('utf-8')
+                return sw     
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def getCellTemp(self, port):
+        func = "GetCellTemperatureDll_USB".encode('utf-8') # Function name as bytes
+        params = "".encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                temp = bytes(pOut).decode('utf-8')
+                return temp
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+    
+    def getCellDssi(self, port, radio):
+        func = "GetCellDssiDll_USB".encode('utf-8') # Function name as bytes
+        params = radio.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                dssi = bytes(pOut).decode('utf-8')
+                return dssi
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def getCellTxFreq(self, port, radio):
+        func = "GetCellTxFreqDll_USB".encode('utf-8') # Function name as bytes
+        params = radio.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                txFreq = bytes(pOut).decode('utf-8')
+                return txFreq
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def getCellTxPwr(self, port, radio):
+        func = "GetCellTxPwrDll_USB".encode('utf-8') # Function name as bytes
+        params = radio.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                txPwr = bytes(pOut).decode('utf-8')
+                return txPwr
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+    
+    def setCellTxEnable(self, port, radio, toggle):
+        func = "SetCellTxEnableDll_USB".encode('utf-8') # Function name as bytes
+        params = radio + "," + str(toggle)
+        params = params.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                return result
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+    
+    def setCellRxTxFreq(self, port, radio, rxFreq, txFreq):
+        func = "SetCellRxTxFreqDll_USB".encode('utf-8') # Function name as bytes
+        params = radio + "," + str(rxFreq) + "," + str(txFreq)
+        params = params.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                return result
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def setCellTxPwr(self, port, radio, txPwr):
+        func = "SetCellTxPwrDll_USB".encode('utf-8') # Function name as bytes
+        params = radio + "," + str(txPwr)
+        params = params.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                return result
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+    
+    def setCellIqStimulus(self, port, bitmap, wfm_path):
+        func = "ConfigIQStimulusDll_USB".encode('utf-8') # Function name as bytes
+        params = str(bitmap) + "," + wfm_path
+        params = params.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                return result
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+    def setCellBandwidth(self, port, radio, bw):
+        func = "SetCellBandwidthDll_USB".encode('utf-8') # Function name as bytes
+        params = radio + "," + str(bw)
+        params = params.encode('utf-8') # Parameters as bytes
+        max_size = 256  # Size of the buffer
+
+        # Allocate a buffer for the output
+        pOut = ctypes.create_string_buffer(max_size)
+
+        # Call the function
+        try:
+            result = self.callMacro(port, func, params, pOut, max_size)
+            if result==1: 
+                return result
+            else:
+                print("Function did not run successfully!")
+
+        except Exception as e:
+            print(f"Error calling function: {e}")
+
+se = SE()
+se.initThor()
+#sw_version = se.getSwVersion(4)
+#temp = se.getCellTemp(4)
+#dssi = se.getCellDssi(4,"A")
+#txFreq = se.getCellTxFreq(4,"A")
+#txPwr = se.getCellTxPwr(4,"A")
+wfmPath = r"C:\Ares Configuration\[WAVEFORMS]\IQ_Streaming\Thor\LTE_DL_TM31_5MHZ_36.bin"
+se.setCellIqStimulus(4, 1, wfmPath)
+se.setCellRxTxFreq(4, "A", 1950.0, 2140.0)
+
+se.setCellBandwidth(4,"A",1)
+se.setCellTxPwr(4,"A", 10.0)
+se.setCellTxEnable(4,"A", 1)
+print(sw_version)
+print(temp)
+print(dssi)
+print(txFreq)
+print(txPwr)
+
+
+
+
